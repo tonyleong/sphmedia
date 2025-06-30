@@ -145,70 +145,122 @@ const rl = readline.createInterface({
 // Function to ask for plateau size
 const askPlateauSize = (): void => {
   console.log(line);
-  console.log(
-    "                                        START                                            "
-  );
+  console.log("🚀                           MARS ROVER SIMULATOR                           🚀");
   console.log(line);
-  rl.question("Please enter plateau size: ", (answer: string) => {
+  console.log("");
+  console.log("📐 STEP 1: Define the Plateau");
+  console.log("   The plateau is a rectangular grid where the rover will navigate.");
+  console.log("   Enter the maximum coordinates (width,height) - e.g., 5,5 creates a 6x6 grid (0-5)");
+  console.log("");
+  rl.question("🏔️  Enter plateau size (width,height): ", (answer: string) => {
     try {
-      const [sx, sy] = answer.split(",");
+      const parts = answer.split(",");
+      if (parts.length !== 2) {
+        throw Error(`❌ Invalid format: '${answer}'\n   Expected exactly 2 parts separated by comma: width,height\n   Example: 5,5`);
+      }
+      const [sx, sy] = parts;
       setSize(sx, sy);
+      console.log(`✅ Plateau set to ${maxSize.x}x${maxSize.y} (coordinates: 0,0 to ${maxSize.x},${maxSize.y})`);
+      console.log("");
       askRoverPosition();
     } catch (error: any) {
+      console.log("");
       console.log(error.message);
-      rl.close();
+      console.log("");
+      console.log("🔄 Let's try again...");
+      console.log("");
+      askPlateauSize();
     }
   });
 };
 
 // Function to ask for rover's initial position
 const askRoverPosition = (): void => {
-  rl.question(
-    "Please enter Mars Rover's initial position: ",
-    (answer: string) => {
-      try {
-        const [px, py, ph] = answer.split(",");
-        setPosition(px, py, ph);
-        askCommand();
-      } catch (error: any) {
-        console.log(error.message);
-        rl.close();
+  console.log("🤖 STEP 2: Position the Mars Rover");
+  console.log("   Place your rover on the plateau with starting coordinates and direction.");
+  console.log("   Format: x,y,direction (e.g., 1,2,N means position (1,2) facing North)");
+  console.log("   📍 Directions: N=North, E=East, S=South, W=West");
+  console.log("");
+  rl.question("🚀 Enter rover's starting position (x,y,direction): ", (answer: string) => {
+    try {
+      const parts = answer.split(",");
+      if (parts.length !== 3) {
+        throw Error(`❌ Invalid format: '${answer}'\n   Expected exactly 3 parts separated by commas: x,y,direction\n   Example: 1,2,N`);
       }
+      const [px, py, ph] = parts;
+      setPosition(px, py, ph);
+      console.log(`✅ Rover positioned at (${position.x},${position.y}) facing ${heading}`);
+      console.log("");
+      askCommand();
+    } catch (error: any) {
+      console.log("");
+      console.log(error.message);
+      console.log("");
+      console.log("🔄 Let's try again...");
+      console.log("");
+      askRoverPosition();
     }
-  );
+  });
 };
 
 // Function to ask for command
 const askCommand = (): void => {
-  rl.question("Please enter command: ", (answer: string) => {
+  console.log("🎮 STEP 3: Control the Mars Rover");
+  console.log("   Send a sequence of commands to move your rover:");
+  console.log("   🔄 L = Turn Left    🔄 R = Turn Right    ⬆️  M = Move Forward");
+  console.log("   Example: LMLMLMLMM (turn left, move, turn left, move, etc.)");
+  console.log("");
+  rl.question("🎯 Enter command sequence: ", (answer: string) => {
     try {
       processInput(answer);
       displayResult();
       askPlateauSize(); // Continue asking for more commands
     } catch (error: any) {
+      console.log("");
       console.log(error.message);
-      rl.close();
+      console.log("");
+      console.log("🔄 Let's try again...");
+      console.log("");
+      askCommand();
     }
   });
 };
 
 // Function to display the result
 const displayResult = (): void => {
-  console.log(
-    `The position of the Mars Rover is (x:${position.x}, y:${position.y}), heading to ${heading}`
-  );
+  console.log("");
+  console.log("🎉 MISSION COMPLETE!");
   console.log(line);
-  console.log(
-    "          if wish to close the application please use Ctrl + C         "
-  );
+  console.log(`🤖 Mars Rover Final Position:`);
+  console.log(`   📍 Coordinates: (${position.x}, ${position.y})`);
+  console.log(`   🧭 Direction: ${heading} (${getDirectionName(heading)})`);
+  console.log(`   🏔️  Plateau: ${maxSize.x}x${maxSize.y}`);
   console.log(line);
-  console.log("*");
-  console.log("*");
-  console.log("*");
-  console.log("*");
-  console.log("*");
-  console.log("*");
-  console.log("*");
+  console.log("");
+  console.log("🔄 Ready for next mission!");
+  console.log("💡 Tip: You can test different plateau sizes and rover positions");
+  console.log("⚠️  Press Ctrl + C to exit the simulator");
+  console.log("");
+  displaySeparator(5);
+  console.log("");
+};
+
+// Helper function to get direction name
+const getDirectionName = (dir: Direction): string => {
+  const directionNames = {
+    N: "North",
+    E: "East",
+    S: "South",
+    W: "West"
+  };
+  return directionNames[dir];
+};
+
+// Function to display separator stars
+const displaySeparator = (count: number = 7): void => {
+  for (let i = 0; i < count; i++) {
+    console.log("⭐");
+  }
 };
 
 // Function to start the application
