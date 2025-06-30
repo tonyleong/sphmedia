@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "node --no-warnings -r ts-node/register run.ts"
+    "start": "node --no-warnings -r ts-node/register main.ts",
+    "start-old": "node --no-warnings -r ts-node/register run.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.7",
