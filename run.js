@@ -4,6 +4,8 @@ let position = { x: 0, y: 0 };
 let maxSize = { x: 0, y: 0 };
 let heading = "N";
 const direction = ["N", "E", "S", "W"];
+const line =
+  "================================================================================================";
 
 const setPosition = (x, y, h) => {
   if (!x || !y || !h || isNaN(+x) || isNaN(+y))
@@ -64,19 +66,41 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-rl.question("Please enter plateau size: ", (answer) => {
-  try {
-    setSize(...answer.split(","));
-    rl.question("Please enter Mars Rover's initial position: ", (answer) => {
-      setPosition(...answer.split(","));
-      rl.question("Please enter command: ", (answer) => {
-        processInput(answer);
-        console.log(position, heading);
-        rl.close();
+const userInput = () => {
+  console.log(line);
+  console.log("                                        START                                            ");
+  console.log(line);
+  rl.question("Please enter plateau size: ", (answer) => {
+    try {
+      setSize(...answer.split(","));
+      rl.question("Please enter Mars Rover's initial position: ", (answer) => {
+        setPosition(...answer.split(","));
+        rl.question("Please enter command: ", (answer) => {
+          processInput(answer);
+          console.log(
+            `The position of the Mars Rover is (x:${position.x}, y:${position.y}, heading to ${heading})`
+          );
+          console.log(line);
+
+          console.log(
+            "          if wish to close the application please use Ctrl + C         "
+          );
+          console.log(line);
+          console.log('*')
+          console.log('*')
+          console.log('*')
+          console.log('*')
+          console.log('*')
+          console.log('*')
+          console.log('*')
+          userInput();
+        });
       });
-    });
-  } catch (error) {
-    console.log(error.message);
-    rl.close();
-  }
-});
+    } catch (error) {
+      console.log(error.message);
+      rl.close();
+    }
+  });
+};
+
+userInput();
