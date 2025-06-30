@@ -29,25 +29,25 @@ let heading: Direction = "N";
 // Validation helper functions
 const validateNumber = (value: string, name: string): number => {
   if (!value?.trim()) {
-    throw Error(`${name} is required`);
+    throw Error(`❌ ${name} is required and cannot be empty`);
   }
   const num = +value.trim();
   if (isNaN(num)) {
-    throw Error(`${name} must be a valid number`);
+    throw Error(`❌ ${name} must be a valid number. You entered: '${value.trim()}'`);
   }
   if (num < 0) {
-    throw Error(`${name} must be non-negative`);
+    throw Error(`❌ ${name} must be non-negative (≥ 0). You entered: ${num}`);
   }
   return num;
 };
 
 const validateDirection = (dir: string): Direction => {
   if (!dir?.trim()) {
-    throw Error("Direction is required");
+    throw Error("❌ Direction is required and cannot be empty");
   }
   const cleanDir = dir.trim().toUpperCase();
   if (!direction.includes(cleanDir as Direction)) {
-    throw Error(`Invalid direction: ${cleanDir}. Valid directions are: ${direction.join(', ')}`);
+    throw Error(`❌ Invalid direction: '${cleanDir}'. Please use one of: ${direction.join(', ')}`);
   }
   return cleanDir as Direction;
 };
@@ -62,7 +62,7 @@ const setPosition = (x: string, y: string, h: string) => {
     position.y = yPos;
     heading = dir;
   } catch (error: any) {
-    throw Error(`Invalid position format. Expected: x,y,direction (e.g., 1,2,N). ${error.message}`);
+    throw Error(`🚀 Mars Rover Position Error!\n   Expected format: x,y,direction (example: 1,2,N)\n   ${error.message}`);
   }
 };
 
@@ -74,7 +74,7 @@ const setSize = (x: string, y: string) => {
     maxSize.x = width;
     maxSize.y = height;
   } catch (error: any) {
-    throw Error(`Invalid plateau size format. Expected: width,height (e.g., 5,5). ${error.message}`);
+    throw Error(`🏔️  Plateau Size Error!\n   Expected format: width,height (example: 5,5)\n   ${error.message}`);
   }
 };
 
@@ -107,7 +107,7 @@ const execute = (command: Command) => {
       break;
     default:
       throw Error(
-        "Invalid command: " + command + ". Valid commands are: L, R, M"
+        `🤖 Mars Rover Command Error!\n   Invalid command: '${command}'\n   ✅ Valid commands: L (turn Left), R (turn Right), M (Move forward)`
       );
   }
 };
@@ -115,14 +115,14 @@ const execute = (command: Command) => {
 const validateCommand = (command: string): Command => {
   const validCommands: Command[] = ["L", "R", "M"];
   if (!validCommands.includes(command as Command)) {
-    throw Error(`Invalid command: '${command}'. Valid commands are: ${validCommands.join(', ')}`);
+    throw Error(`❌ Invalid command: '${command}'\n   ✅ Valid commands: L (turn Left), R (turn Right), M (Move forward)`);
   }
   return command as Command;
 };
 
 const processInput = (fullCommand: string) => {
   if (!fullCommand?.trim()) {
-    throw Error("Command sequence is required and cannot be empty");
+    throw Error("🎮 Command Input Error!\n   Please enter a command sequence (example: LMLMLMLMM)\n   ❌ Empty commands are not allowed");
   }
 
   const cleanCommand = fullCommand.trim();
@@ -133,7 +133,7 @@ const processInput = (fullCommand: string) => {
       execute(command);
     }
   } catch (error: any) {
-    throw Error(`Invalid command sequence: '${cleanCommand}'. ${error.message}`);
+    throw Error(`🎮 Command Sequence Error!\n   Input: '${cleanCommand}'\n   ${error.message}`);
   }
 };
 
