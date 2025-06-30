@@ -26,20 +26,56 @@ let position: Position = { x: 0, y: 0 };
 let maxSize: Position = { x: 0, y: 0 };
 let heading: Direction = "N";
 
+// Validation helper functions
+const validateNumber = (value: string, name: string): number => {
+  if (!value?.trim()) {
+    throw Error(`${name} is required`);
+  }
+  const num = +value.trim();
+  if (isNaN(num)) {
+    throw Error(`${name} must be a valid number`);
+  }
+  if (num < 0) {
+    throw Error(`${name} must be non-negative`);
+  }
+  return num;
+};
+
+const validateDirection = (dir: string): Direction => {
+  if (!dir?.trim()) {
+    throw Error("Direction is required");
+  }
+  const cleanDir = dir.trim().toUpperCase();
+  if (!direction.includes(cleanDir as Direction)) {
+    throw Error(`Invalid direction: ${cleanDir}. Valid directions are: ${direction.join(', ')}`);
+  }
+  return cleanDir as Direction;
+};
+
 const setPosition = (x: string, y: string, h: string) => {
-  if (!x || !y || !h || isNaN(+x) || isNaN(+y))
-    throw Error("Wrong position input, eg: 0, 0, N");
-  if (!direction.includes(h as Direction)) throw Error("Wrong direction input!");
-  position.x = +x;
-  position.y = +y;
-  heading = h as Direction;
+  try {
+    const xPos = validateNumber(x, "X coordinate");
+    const yPos = validateNumber(y, "Y coordinate");
+    const dir = validateDirection(h);
+
+    position.x = xPos;
+    position.y = yPos;
+    heading = dir;
+  } catch (error: any) {
+    throw Error(`Invalid position format. Expected: x,y,direction (e.g., 1,2,N). ${error.message}`);
+  }
 };
 
 const setSize = (x: string, y: string) => {
-  if (!x || !y || isNaN(+x) || isNaN(+y))
-    throw Error("Wrong size input, eg: 0,0");
-  maxSize.x = +x;
-  maxSize.y = +y;
+  try {
+    const width = validateNumber(x, "Plateau width");
+    const height = validateNumber(y, "Plateau height");
+
+    maxSize.x = width;
+    maxSize.y = height;
+  } catch (error: any) {
+    throw Error(`Invalid plateau size format. Expected: width,height (e.g., 5,5). ${error.message}`);
+  }
 };
 
 const move = (x: number = 0, y: number = 0) => {
@@ -76,19 +112,28 @@ const execute = (command: Command) => {
   }
 };
 
+const validateCommand = (command: string): Command => {
+  const validCommands: Command[] = ["L", "R", "M"];
+  if (!validCommands.includes(command as Command)) {
+    throw Error(`Invalid command: '${command}'. Valid commands are: ${validCommands.join(', ')}`);
+  }
+  return command as Command;
+};
+
 const processInput = (fullCommand: string) => {
-  if (!fullCommand || typeof fullCommand !== "string") {
-    throw Error("Command must be a non-empty string");
+  if (!fullCommand?.trim()) {
+    throw Error("Command sequence is required and cannot be empty");
   }
 
-  const validCommands: Command[] = ["L", "R", "M"];
+  const cleanCommand = fullCommand.trim();
 
-  for (let i = 0; i < fullCommand.length; i++) {
-    const char = fullCommand[i];
-    if (!validCommands.includes(char as Command)) {
-      throw Error(`Invalid command: ${char}. Valid commands are: L, R, M`);
+  try {
+    for (let i = 0; i < cleanCommand.length; i++) {
+      const command = validateCommand(cleanCommand[i]);
+      execute(command);
     }
-    execute(char as Command);
+  } catch (error: any) {
+    throw Error(`Invalid command sequence: '${cleanCommand}'. ${error.message}`);
   }
 };
 
