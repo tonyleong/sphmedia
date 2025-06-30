@@ -40,13 +40,14 @@ Output:
 ### Installation
 1. Clone the repository:
    ```sh
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone https://github.com/tonyleong/sphmedia.git
+   cd sphmedia
    ```
 2. Install dependencies:
    ```sh
    npm install
    ```
+
 
 ### Running the Application
 To start the Mars Rover CLI application, run:
@@ -60,6 +61,15 @@ You will be prompted to enter:
 - Command sequence (e.g., `LMLMLMLMM`)
 
 The application will output the rover's final position and heading.
+
+---
+
+### Running Tests
+To run the test suite and verify the application logic, use:
+```sh
+npm run test
+```
+This will execute all tests in the `tests/` directory using Jest and display the results in your terminal.
 
 ---
 
