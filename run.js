@@ -21,6 +21,8 @@ const move = (x = 0, y = 0) => {
   let newY = (position.y += y);
   if (newX < 0) newX = 0;
   if (newY < 0) newY = 0;
+  if (newX > maxSize.x) newX = maxSize.x;
+  if (newY > maxSize.y) newY = maxSize.y;
   position.x = newX;
   position.y = newY;
 };
@@ -32,7 +34,7 @@ const execute = (command) => {
     if (index === 0) heading = direction[direction.length - 1];
     else heading = direction[index - 1];
   } else if (command === "R") {
-    if (index === direction[direction.length - 1]) heading = direction[0];
+    if (index === direction.length - 1) heading = direction[0];
     else heading = direction[index + 1];
   } else if (command === "M") {
     if (heading === "N") {
@@ -50,10 +52,11 @@ const execute = (command) => {
 const processInput = (fullCommand) => {
   for (let i in fullCommand) {
     execute(fullCommand[i]);
+    console.log(`process-${i}`, position, heading)
   }
 };
 
 setSize(5, 5);
-setPosition(1, 2, "N");
-processInput("LMLMLMLMM");
+setPosition(3, 3, "E");
+processInput("MMRMMRMRRM");
 console.log(position, heading);
