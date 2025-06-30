@@ -5,6 +5,13 @@ var position = { x: 0, y: 0 };
 var maxSize = { x: 0, y: 0 };
 var heading = "N";
 var direction = ["N", "E", "S", "W"];
+// Direction movement map for cleaner movement logic
+var directionMovement = {
+    "N": { x: 0, y: 1 },
+    "E": { x: 1, y: 0 },
+    "S": { x: 0, y: -1 },
+    "W": { x: -1, y: 0 }
+};
 var line = "================================================================================================";
 var setPosition = function (x, y, h) {
     if (!x || !y || !h || isNaN(+x) || isNaN(+y))
@@ -52,23 +59,17 @@ var execute = function (command) {
             heading = direction[index + 1];
     }
     else if (command === "M") {
-        if (heading === "N") {
-            move(0, 1);
+        var movement = directionMovement[heading];
+        if (movement) {
+            move(movement.x, movement.y);
         }
-        else if (heading === "E") {
-            move(1, 0);
+        else {
+            throw Error("Invalid heading: " + heading);
         }
-        else if (heading === "S") {
-            move(0, -1);
-        }
-        else if (heading === "W") {
-            move(-1, 0);
-        }
-        else
-            throw Error("Wrong command input");
     }
-    else
+    else {
         throw Error("Wrong command input");
+    }
 };
 var processInput = function (fullCommand) {
     for (var i = 0; i < fullCommand.length; i++) {

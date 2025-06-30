@@ -6,17 +6,26 @@ interface Position {
 }
 
 const direction = ["N", "E", "S", "W"];
+
+// Direction movement map for cleaner movement logic
+const directionMovement: { [key: string]: { x: number; y: number } } = {
+  N: { x: 0, y: 1 },
+  E: { x: 1, y: 0 },
+  S: { x: 0, y: -1 },
+  W: { x: -1, y: 0 },
+};
+
 const line =
   "================================================================================================";
-  
+
 let position: Position = { x: 0, y: 0 };
 let maxSize: Position = { x: 0, y: 0 };
 let heading: string = "N";
 
 const setPosition = (x: string, y: string, h: string) => {
   if (!x || !y || !h || isNaN(+x) || isNaN(+y))
-    throw new Error("Wrong position input, eg: 0, 0, N");
-  if (!direction.includes(h)) throw new Error("Wrong direction input!");
+    throw Error("Wrong position input, eg: 0, 0, N");
+  if (!direction.includes(h)) throw Error("Wrong direction input!");
   position.x = +x;
   position.y = +y;
   heading = h;
@@ -24,7 +33,7 @@ const setPosition = (x: string, y: string, h: string) => {
 
 const setSize = (x: string, y: string) => {
   if (!x || !y || isNaN(+x) || isNaN(+y))
-    throw new Error("Wrong size input, eg: 0,0");
+    throw Error("Wrong size input, eg: 0,0");
   maxSize.x = +x;
   maxSize.y = +y;
 };
@@ -41,6 +50,8 @@ const move = (x: number = 0, y: number = 0) => {
 };
 
 const execute = (command: string) => {
+  console.log(`command-${command}`);
+
   let index = direction.indexOf(heading);
   if (command === "L") {
     if (index === 0) heading = direction[direction.length - 1];
@@ -49,19 +60,23 @@ const execute = (command: string) => {
     if (index === direction.length - 1) heading = direction[0];
     else heading = direction[index + 1];
   } else if (command === "M") {
-    if (heading === "N") {
-      move(0, 1);
-    } else if (heading === "E") {
-      move(1, 0);
-    } else if (heading === "S") {
-      move(0, -1);
-    } else if (heading === "W") {
-      move(-1, 0);
-    } else throw Error("Wrong command input");
-  } else throw Error("Wrong command input");
+    const movement =
+      directionMovement[heading as keyof typeof directionMovement];
+    if (movement) {
+      move(movement.x, movement.y);
+    } else {
+      throw Error("Invalid heading: " + heading);
+    }
+  } else {
+    throw Error("Wrong command input");
+  }
 };
 
 const processInput = (fullCommand: string) => {
+  if (!fullCommand || typeof fullCommand !== "string") {
+    throw Error("Command must be a non-empty string");
+  }
+
   for (let i = 0; i < fullCommand.length; i++) {
     execute(fullCommand[i]);
   }
@@ -105,7 +120,7 @@ const userInput = (): void => {
             console.log("*");
             console.log("*");
             console.log("*");
-            //   userInput();
+            userInput();
           });
         }
       );
