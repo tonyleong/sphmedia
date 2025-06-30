@@ -5,10 +5,14 @@ interface Position {
   y: number;
 }
 
-const direction = ["N", "E", "S", "W"];
+// Define specific types for better type safety
+type Direction = "N" | "E" | "S" | "W";
+type Command = "L" | "R" | "M";
+
+const direction: readonly Direction[] = ["N", "E", "S", "W"];
 
 // Direction movement map for cleaner movement logic
-const directionMovement: { [key: string]: { x: number; y: number } } = {
+const directionMovement: Record<Direction, Position> = {
   N: { x: 0, y: 1 },
   E: { x: 1, y: 0 },
   S: { x: 0, y: -1 },
@@ -20,15 +24,15 @@ const line =
 
 let position: Position = { x: 0, y: 0 };
 let maxSize: Position = { x: 0, y: 0 };
-let heading: string = "N";
+let heading: Direction = "N";
 
 const setPosition = (x: string, y: string, h: string) => {
   if (!x || !y || !h || isNaN(+x) || isNaN(+y))
     throw Error("Wrong position input, eg: 0, 0, N");
-  if (!direction.includes(h)) throw Error("Wrong direction input!");
+  if (!direction.includes(h as Direction)) throw Error("Wrong direction input!");
   position.x = +x;
   position.y = +y;
-  heading = h;
+  heading = h as Direction;
 };
 
 const setSize = (x: string, y: string) => {
@@ -49,7 +53,7 @@ const move = (x: number = 0, y: number = 0) => {
   position.y = newY;
 };
 
-const execute = (command: string) => {
+const execute = (command: Command) => {
   const index = direction.indexOf(heading);
 
   switch (command) {
@@ -62,13 +66,8 @@ const execute = (command: string) => {
         index === direction.length - 1 ? direction[0] : direction[index + 1];
       break;
     case "M":
-      const movement =
-        directionMovement[heading as keyof typeof directionMovement];
-      if (movement) {
-        move(movement.x, movement.y);
-      } else {
-        throw Error("Invalid heading: " + heading);
-      }
+      const movement = directionMovement[heading];
+      move(movement.x, movement.y);
       break;
     default:
       throw Error(
@@ -82,8 +81,14 @@ const processInput = (fullCommand: string) => {
     throw Error("Command must be a non-empty string");
   }
 
+  const validCommands: Command[] = ["L", "R", "M"];
+
   for (let i = 0; i < fullCommand.length; i++) {
-    execute(fullCommand[i]);
+    const char = fullCommand[i];
+    if (!validCommands.includes(char as Command)) {
+      throw Error(`Invalid command: ${char}. Valid commands are: L, R, M`);
+    }
+    execute(char as Command);
   }
 };
 
