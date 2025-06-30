@@ -2,9 +2,10 @@ let position = { x: 0, y: 0 };
 let maxSize = { x: 0, y: 0 };
 let heading = "N";
 const direction = ["N", "E", "S", "W"];
+const command = ['L', 'R', 'M']
 
 const setPosition = (x, y, h) => {
-  //handle wrong hdeaing input
+  if (!direction.includes(h)) throw new Error("Wrong direction input!");
   position.x = x;
   position.y = y;
   heading = h;
@@ -16,7 +17,6 @@ const setSize = (x, y) => {
 };
 
 const move = (x = 0, y = 0) => {
-  //handle max size
   let newX = (position.x += x);
   let newY = (position.y += y);
   if (newX < 0) newX = 0;
@@ -28,7 +28,6 @@ const move = (x = 0, y = 0) => {
 };
 
 const execute = (command) => {
-  // L = direction-1, R = direction +1
   let index = direction.indexOf(heading);
   if (command === "L") {
     if (index === 0) heading = direction[direction.length - 1];
@@ -45,18 +44,18 @@ const execute = (command) => {
       move(0, -1);
     } else if (heading === "W") {
       move(-1, 0);
-    } else throw Error("Wrong input");
-  } else throw Error("Wrong input");
+    } else throw Error("Wrong command input");
+  } else throw Error("Wrong command input");
 };
 
 const processInput = (fullCommand) => {
   for (let i in fullCommand) {
     execute(fullCommand[i]);
-    console.log(`process-${i}`, position, heading)
+    console.log(`process-${i}`, position, heading);
   }
 };
 
 setSize(5, 5);
 setPosition(3, 3, "E");
-processInput("MMRMMRMRRM");
+processInput("MMRMMRMRRMY");
 console.log(position, heading);
