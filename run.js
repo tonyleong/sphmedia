@@ -1,8 +1,12 @@
+const readline = require('readline');
+
+
 let position = { x: 0, y: 0 };
 let maxSize = { x: 0, y: 0 };
 let heading = "N";
 const direction = ["N", "E", "S", "W"];
-const command = ['L', 'R', 'M']
+
+
 
 const setPosition = (x, y, h) => {
   if (!direction.includes(h)) throw new Error("Wrong direction input!");
@@ -55,7 +59,16 @@ const processInput = (fullCommand) => {
   }
 };
 
-setSize(5, 5);
-setPosition(3, 3, "E");
-processInput("MMRMMRMRRMY");
-console.log(position, heading);
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question('Please enter plateau size: ', (answer) => {
+  // Use the answer variable as user input
+  setSize(...answer.split(','))
+  console.log(maxSize)
+  rl.close();
+});
+
+
