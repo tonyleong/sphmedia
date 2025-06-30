@@ -17,21 +17,23 @@ const setSize = (x, y) => {
 
 const move = (x = 0, y = 0) => {
   //handle max size
-
-  position.x = position.x == 0 ? position.x : position.x + x;
-  position.y = position.y == 0 ? position.y : position.y + y;
+  let newX = (position.x += x);
+  let newY = (position.y += y);
+  if (newX < 0) newX = 0;
+  if (newY < 0) newY = 0;
+  position.x = newX;
+  position.y = newY;
 };
 
 const execute = (command) => {
   // L = direction-1, R = direction +1
   let index = direction.indexOf(heading);
-  console.log(index)
   if (command === "L") {
     if (index === 0) heading = direction[direction.length - 1];
-    else direction[index - 1];
+    else heading = direction[index - 1];
   } else if (command === "R") {
     if (index === direction[direction.length - 1]) heading = direction[0];
-    else direction[index + 1];
+    else heading = direction[index + 1];
   } else if (command === "M") {
     if (heading === "N") {
       move(0, 1);
@@ -43,17 +45,11 @@ const execute = (command) => {
       move(-1, 0);
     } else throw Error("Wrong input");
   } else throw Error("Wrong input");
-
-  //   N = y + 1;
-  //   E = x + 1;
-  //   S = y - 1;
-  //   W = x - 1;
 };
 
 const processInput = (fullCommand) => {
   for (let i in fullCommand) {
     execute(fullCommand[i]);
-    console.log("process"+i, position, heading)
   }
 };
 
