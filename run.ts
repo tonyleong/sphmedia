@@ -50,8 +50,6 @@ const move = (x: number = 0, y: number = 0) => {
 };
 
 const execute = (command: string) => {
-  console.log(`command-${command}`);
-
   let index = direction.indexOf(heading);
   if (command === "L") {
     if (index === 0) heading = direction[direction.length - 1];
@@ -87,43 +85,13 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const userInput = (): void => {
-  console.log(line);
-  console.log(
-    "                                        START                                            "
-  );
-  console.log(line);
+// Function to ask for plateau size
+const askPlateauSize = (): void => {
   rl.question("Please enter plateau size: ", (answer: string) => {
     try {
       const [sx, sy] = answer.split(",");
       setSize(sx, sy);
-      rl.question(
-        "Please enter Mars Rover's initial position: ",
-        (answer: string) => {
-          const [px, py, ph] = answer.split(",");
-          setPosition(px, py, ph);
-          rl.question("Please enter command: ", (answer: string) => {
-            processInput(answer);
-            console.log(
-              `The position of the Mars Rover is (x:${position.x}, y:${position.y}), heading to ${heading}`
-            );
-            console.log(line);
-
-            console.log(
-              "          if wish to close the application please use Ctrl + C         "
-            );
-            console.log(line);
-            console.log("*");
-            console.log("*");
-            console.log("*");
-            console.log("*");
-            console.log("*");
-            console.log("*");
-            console.log("*");
-            userInput();
-          });
-        }
-      );
+      askRoverPosition();
     } catch (error: any) {
       console.log(error.message);
       rl.close();
@@ -131,4 +99,64 @@ const userInput = (): void => {
   });
 };
 
-userInput();
+// Function to ask for rover's initial position
+const askRoverPosition = (): void => {
+  rl.question(
+    "Please enter Mars Rover's initial position: ",
+    (answer: string) => {
+      try {
+        const [px, py, ph] = answer.split(",");
+        setPosition(px, py, ph);
+        askCommand();
+      } catch (error: any) {
+        console.log(error.message);
+        rl.close();
+      }
+    }
+  );
+};
+
+// Function to ask for command
+const askCommand = (): void => {
+  rl.question("Please enter command: ", (answer: string) => {
+    try {
+      processInput(answer);
+      displayResult();
+      askCommand(); // Continue asking for more commands
+    } catch (error: any) {
+      console.log(error.message);
+      rl.close();
+    }
+  });
+};
+
+// Function to display the result
+const displayResult = (): void => {
+  console.log(
+    `The position of the Mars Rover is (x:${position.x}, y:${position.y}), heading to ${heading}`
+  );
+  console.log(line);
+  console.log(
+    "          if wish to close the application please use Ctrl + C         "
+  );
+  console.log(line);
+  console.log("*");
+  console.log("*");
+  console.log("*");
+  console.log("*");
+  console.log("*");
+  console.log("*");
+  console.log("*");
+};
+
+// Function to start the application
+const startApplication = (): void => {
+  console.log(line);
+  console.log(
+    "                                        START                                            "
+  );
+  console.log(line);
+  askPlateauSize();
+};
+
+startApplication();
