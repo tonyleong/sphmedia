@@ -50,23 +50,30 @@ const move = (x: number = 0, y: number = 0) => {
 };
 
 const execute = (command: string) => {
-  let index = direction.indexOf(heading);
-  if (command === "L") {
-    if (index === 0) heading = direction[direction.length - 1];
-    else heading = direction[index - 1];
-  } else if (command === "R") {
-    if (index === direction.length - 1) heading = direction[0];
-    else heading = direction[index + 1];
-  } else if (command === "M") {
-    const movement =
-      directionMovement[heading as keyof typeof directionMovement];
-    if (movement) {
-      move(movement.x, movement.y);
-    } else {
-      throw Error("Invalid heading: " + heading);
-    }
-  } else {
-    throw Error("Wrong command input");
+  const index = direction.indexOf(heading);
+
+  switch (command) {
+    case "L":
+      heading =
+        index === 0 ? direction[direction.length - 1] : direction[index - 1];
+      break;
+    case "R":
+      heading =
+        index === direction.length - 1 ? direction[0] : direction[index + 1];
+      break;
+    case "M":
+      const movement =
+        directionMovement[heading as keyof typeof directionMovement];
+      if (movement) {
+        move(movement.x, movement.y);
+      } else {
+        throw Error("Invalid heading: " + heading);
+      }
+      break;
+    default:
+      throw Error(
+        "Invalid command: " + command + ". Valid commands are: L, R, M"
+      );
   }
 };
 
@@ -87,6 +94,11 @@ const rl = readline.createInterface({
 
 // Function to ask for plateau size
 const askPlateauSize = (): void => {
+  console.log(line);
+  console.log(
+    "                                        START                                            "
+  );
+  console.log(line);
   rl.question("Please enter plateau size: ", (answer: string) => {
     try {
       const [sx, sy] = answer.split(",");
@@ -122,7 +134,7 @@ const askCommand = (): void => {
     try {
       processInput(answer);
       displayResult();
-      askCommand(); // Continue asking for more commands
+      askPlateauSize(); // Continue asking for more commands
     } catch (error: any) {
       console.log(error.message);
       rl.close();
@@ -151,11 +163,6 @@ const displayResult = (): void => {
 
 // Function to start the application
 const startApplication = (): void => {
-  console.log(line);
-  console.log(
-    "                                        START                                            "
-  );
-  console.log(line);
   askPlateauSize();
 };
 
