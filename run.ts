@@ -1,0 +1,119 @@
+import * as readline from "readline";
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+const direction = ["N", "E", "S", "W"];
+const line =
+  "================================================================================================";
+  
+let position: Position = { x: 0, y: 0 };
+let maxSize: Position = { x: 0, y: 0 };
+let heading: string = "N";
+
+const setPosition = (x: string, y: string, h: string) => {
+  if (!x || !y || !h || isNaN(+x) || isNaN(+y))
+    throw new Error("Wrong position input, eg: 0, 0, N");
+  if (!direction.includes(h)) throw new Error("Wrong direction input!");
+  position.x = +x;
+  position.y = +y;
+  heading = h;
+};
+
+const setSize = (x: string, y: string) => {
+  if (!x || !y || isNaN(+x) || isNaN(+y))
+    throw new Error("Wrong size input, eg: 0,0");
+  maxSize.x = +x;
+  maxSize.y = +y;
+};
+
+const move = (x: number = 0, y: number = 0) => {
+  let newX = position.x + x;
+  let newY = position.y + y;
+  if (newX < 0) newX = 0;
+  if (newY < 0) newY = 0;
+  if (newX > maxSize.x) newX = maxSize.x;
+  if (newY > maxSize.y) newY = maxSize.y;
+  position.x = newX;
+  position.y = newY;
+};
+
+const execute = (command: string) => {
+  let index = direction.indexOf(heading);
+  if (command === "L") {
+    if (index === 0) heading = direction[direction.length - 1];
+    else heading = direction[index - 1];
+  } else if (command === "R") {
+    if (index === direction.length - 1) heading = direction[0];
+    else heading = direction[index + 1];
+  } else if (command === "M") {
+    if (heading === "N") {
+      move(0, 1);
+    } else if (heading === "E") {
+      move(1, 0);
+    } else if (heading === "S") {
+      move(0, -1);
+    } else if (heading === "W") {
+      move(-1, 0);
+    } else throw Error("Wrong command input");
+  } else throw Error("Wrong command input");
+};
+
+const processInput = (fullCommand: string) => {
+  for (let i = 0; i < fullCommand.length; i++) {
+    execute(fullCommand[i]);
+  }
+};
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const userInput = (): void => {
+  console.log(line);
+  console.log(
+    "                                        START                                            "
+  );
+  console.log(line);
+  rl.question("Please enter plateau size: ", (answer: string) => {
+    try {
+      const [sx, sy] = answer.split(",");
+      setSize(sx, sy);
+      rl.question(
+        "Please enter Mars Rover's initial position: ",
+        (answer: string) => {
+          const [px, py, ph] = answer.split(",");
+          setPosition(px, py, ph);
+          rl.question("Please enter command: ", (answer: string) => {
+            processInput(answer);
+            console.log(
+              `The position of the Mars Rover is (x:${position.x}, y:${position.y}), heading to ${heading}`
+            );
+            console.log(line);
+
+            console.log(
+              "          if wish to close the application please use Ctrl + C         "
+            );
+            console.log(line);
+            console.log("*");
+            console.log("*");
+            console.log("*");
+            console.log("*");
+            console.log("*");
+            console.log("*");
+            console.log("*");
+            //   userInput();
+          });
+        }
+      );
+    } catch (error: any) {
+      console.log(error.message);
+      rl.close();
+    }
+  });
+};
+
+userInput();
