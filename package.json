@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node --no-warnings -r ts-node/register main.ts",
+    "start": "node --no-warnings -r ts-node/register src/main.ts",
     "start-old": "node --no-warnings -r ts-node/register run.ts"
   },
   "devDependencies": {
