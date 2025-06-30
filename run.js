@@ -6,16 +6,19 @@ let heading = "N";
 const direction = ["N", "E", "S", "W"];
 
 const setPosition = (x, y, h) => {
+  if (!x || !y || !h || isNaN(+x) || isNaN(+y))
+    throw new Error("Wrong position input, eg: 0, 0, N");
   if (!direction.includes(h)) throw new Error("Wrong direction input!");
-  position.x = x;
-  position.y = y;
+  position.x = +x;
+  position.y = +y;
   heading = h;
 };
 
 const setSize = (x, y) => {
-  if ((!x, !y)) throw new Error("Wrong size input, eg: 0,0");
-  maxSize.x = x;
-  maxSize.y = y;
+  if (!x || !y || isNaN(+x) || isNaN(+y))
+    throw new Error("Wrong size input, eg: 0,0");
+  maxSize.x = +x;
+  maxSize.y = +y;
 };
 
 const move = (x = 0, y = 0) => {
@@ -53,7 +56,6 @@ const execute = (command) => {
 const processInput = (fullCommand) => {
   for (let i in fullCommand) {
     execute(fullCommand[i]);
-    console.log(`process-${i}`, position, heading);
   }
 };
 
@@ -64,11 +66,17 @@ const rl = readline.createInterface({
 
 rl.question("Please enter plateau size: ", (answer) => {
   try {
-    // Use the answer variable as user input
     setSize(...answer.split(","));
-    console.log(maxSize);
+    rl.question("Please enter Mars Rover's initial position: ", (answer) => {
+      setPosition(...answer.split(","));
+      rl.question("Please enter command: ", (answer) => {
+        processInput(answer);
+        console.log(position, heading);
+        rl.close();
+      });
+    });
   } catch (error) {
     console.log(error.message);
+    rl.close();
   }
-  rl.close();
 });
